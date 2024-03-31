@@ -2,7 +2,7 @@ import numpy as np
 from math import factorial
 from scipy.stats import norm
 from decimal import *
-from termcolor import colored
+
 
 #  function gets name for each item in result
 _add_names_for_result = lambda _inp: {'Bernoulli ': _inp[0], 'Poisson ': _inp[1], 'Local Moivre-Laplace ': _inp[2],
@@ -22,13 +22,13 @@ def _smart_print(res):
 
 
 #  binomial coefficients counter
-bin_coef = lambda n, k: Decimal(factorial(n)) / Decimal((factorial(k) * factorial(n - k)))
+bin_coef = lambda n, k: factorial(n) / (factorial(k) * factorial(n - k))
 
 
 #  Bernoulli function
 def bernoulli(k, p, n):
     try:
-        return bin_coef(n, k) * Decimal(p ** k * (1 - p) ** (n - k))
+        return bin_coef(n, k) * p ** k * (1 - p) ** (n - k)
     except OverflowError:
         return "Can't count Bernoulli function!"
 
@@ -127,7 +127,7 @@ def k_leq_5_counter(n, p):
 
 #  for k max
 def k_max_prob(n, p):
-    max_k = int(n * p)
+    max_k = round(n * p + 1)
     _bern = 0
     _pois = 0
     _locM = 0
@@ -166,16 +166,16 @@ def tester():
 
     for i in range(len(n)):
         for j in range(len(p)):
-            print('', i * len(p) + j + 1, ': n = ', n[i], ' p = ', p[j], '')
+            print('\u001b[35;1m ', i * len(p) + j + 1, ': n = ', n[i], ' p = ', p[j], '\u001b[0m \n')
             leq_5 = k_leq_5_counter(n[i], p[j])
 
             in_area = k_in_area_counter(n[i], p[j])
 
             k_max = k_max_prob(n[i], p[j])
 
-            res = {'For P(Sn leq 5)': leq_5, 'For P(in area of n / 2)': in_area, 'For P(k*)': k_max}
+            res = {'P(S less or equal 5)': leq_5, 'P(S in area of n / 2 plus minus sqrt (pnq))': in_area,
+                   'P(S = k*), k* - most likely number of successes': k_max}
             _smart_print(res)
 
 
 tester()
-
